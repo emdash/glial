@@ -1,0 +1,7 @@
+[package]
+name = "glium-tut"
+version = "0.1.0"
+authors = ["Brandon Lewis <dotsony@gmail.com>"]
+
+[dependencies]
+glium = "*"
