@@ -5,7 +5,8 @@ extern crate glium_tut;
 
 use glium::glutin;
 use glium::Surface;
-use glium_tut::{Layer, ClearColorRGBA, render};
+use glium_tut::render;
+use glium_tut::layer::{Layer, ClearColorRGBA};
 
 
 
