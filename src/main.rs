@@ -5,6 +5,7 @@ extern crate glium_tut;
 
 use glium::glutin;
 use glium::Surface;
+use glium_tut::{Layer, ClearColorRGBA};
 use glium_tut::clock::Clock;
 
 
@@ -34,19 +35,10 @@ const FRAGMENT_SHADER_SRC: &str = r#"
 struct Vertex {
     position: [f32; 2],
 }
-// I think what this does is arrange for the name "position" to wire
-// up to the vertex shader input "position"
 implement_vertex!(Vertex, position);
 
 
-// Abstract a bunch of Drawing-related stuff from the boilerplate.
-pub trait Layer {
-    fn draw(&self, frame: &mut glium::Frame, time: f32);
-    fn handle_event(&self, event: glutin::Event) -> bool;
-}
 
-
-// Factor out the original demo code into a struct that implements the Layer trait
 pub struct SineWaveDemo {
     vbo: glium::VertexBuffer<Vertex>,
     program: glium::Program,
@@ -98,25 +90,6 @@ impl Layer for SineWaveDemo {
 }
 
 
-pub struct ClearColorRGBA {
-    red: f32,
-    green: f32,
-    blue: f32,
-    // XXX: is alpha meaningful for clear_color?
-    alpha: f32,
-}
-
-
-impl Layer for ClearColorRGBA {
-    fn draw(&self, frame: &mut glium::Frame, _: f32) {
-        frame.clear_color(self.red, self.green, self.blue, self.alpha);
-    }
-
-    fn handle_event(&self, _: glutin::Event) -> bool {
-        false
-    }
-}
-
 
 // Generate some data. Later this will be loaded off disk.
 fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
@@ -136,30 +109,6 @@ fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     }
 
     ret
-}
-
-
-fn render(
-    layers: &[&Layer],
-    display: &glium::Display,
-    mainloop: &mut glutin::EventsLoop
-) {
-    let mut closed = false;
-    let clock = Clock::new();
-
-    while !closed {
-        let mut target = display.draw();
-
-        for layer in layers {
-            layer.draw(&mut target, clock.seconds());
-
-            mainloop.poll_events(|e| {
-                closed = layer.handle_event(e);
-            });
-        }
-
-        target.finish().unwrap();
-    }
 }
 
 
