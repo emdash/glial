@@ -38,20 +38,21 @@ struct Vertex {
 implement_vertex!(Vertex, position);
 
 
-
-pub struct SineWaveDemo {
+// SineWaveDemo generalizes into PolyLine.
+// Note, this struct itself is probably more general still.
+pub struct PolyLine {
     vbo: glium::VertexBuffer<Vertex>,
     program: glium::Program,
 }
 
-impl SineWaveDemo {
-    fn new(display: &glium::Display) -> SineWaveDemo {
-        let vertices = make_shape([-10.0, 10.0], 100);
-
-        SineWaveDemo {
+// Only this impl, which makes assumptions about the vertex buffer and
+// shaders.
+impl PolyLine {
+    fn new(display: &glium::Display, vertices: &[Vertex]) -> PolyLine {
+        PolyLine {
             vbo: glium::VertexBuffer::new(
                 display,
-                &vertices
+                vertices
             ).unwrap(),
             program: glium::Program::from_source(
                 display,
@@ -63,7 +64,9 @@ impl SineWaveDemo {
     }
 }
 
-impl Layer for SineWaveDemo {
+
+// Even the Layer impl is pretty generic.
+impl Layer for PolyLine {
     fn draw(&self, frame: &mut glium::Frame, time: f32) {
         let indexes = glium::index::NoIndices(
             glium::index::PrimitiveType::LineStrip
@@ -78,6 +81,7 @@ impl Layer for SineWaveDemo {
         ).unwrap();
     }
 
+    // And it's pretty clear that handle event may not belong in here, now.
     fn handle_event(&self, event: glutin::Event) -> bool {
         match event {
             glutin::Event::WindowEvent {event, ..} => match event {
@@ -92,7 +96,11 @@ impl Layer for SineWaveDemo {
 
 
 // Generate some data. Later this will be loaded off disk.
-fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
+
+// Note: this internally normalizes into the GL coordinates of (-1,
+// -1) to (1, 1). The next step is to factor out the evaluation from
+// the transform.
+fn sin(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     let x0 = domain[0];
 
     let span = (domain[1] - domain[0]).abs();
@@ -122,7 +130,9 @@ fn main() {
         green: 0.0,
         blue: 0.0,
     };
-    let sine = SineWaveDemo::new(&display);
+
+    let sine_points = sin([-10.0, 10.0], 100);
+    let sine = PolyLine::new(&display, &sine_points);
     let layers: Vec<&Layer> = vec![&background, &sine];
 
     render(&layers, &display, &mut events_loop);

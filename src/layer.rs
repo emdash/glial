@@ -10,6 +10,8 @@ pub trait Layer {
     fn handle_event(&self, event: glutin::Event) -> bool;
 }
 
+
+// A Layer which simply clears the background to a solid color.
 pub struct ClearColorRGBA {
     pub red: f32,
     pub green: f32,
