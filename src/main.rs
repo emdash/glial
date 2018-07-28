@@ -143,18 +143,24 @@ fn main() {
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let clock = Clock::new();
-    let layer = SineWaveDemo::new(&display);
+
+    let sine = SineWaveDemo::new(&display);
+
+    let layers: Vec<&Layer> = vec![&sine];
 
     while !closed {
         let mut target = display.draw();
 
         target.clear_color(0.0, 0.0, 0.0, 1.0);
-        layer.draw(&mut target, clock.seconds());
-        target.finish().unwrap();
 
-        // candidtate for next refactoring
-        events_loop.poll_events(|e| {
-            closed = layer.handle_event(e);
-        });
+        for layer in &layers {
+            layer.draw(&mut target, clock.seconds());
+
+            events_loop.poll_events(|e| {
+                closed = layer.handle_event(e);
+            });
+        }
+
+        target.finish().unwrap();
     }
 }
