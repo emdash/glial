@@ -59,6 +59,7 @@ implement_vertex!(Vertex, position);
 // Abstract a bunch of Drawing-related stuff from the boilerplate.
 pub trait Layer {
     fn draw(&self, frame: &mut glium::Frame, time: f32);
+    fn handle_event(&self, event: glutin::Event) -> bool;
 }
 
 
@@ -101,6 +102,16 @@ impl Layer for SineWaveDemo {
             &Default::default()
         ).unwrap();
     }
+
+    fn handle_event(&self, event: glutin::Event) -> bool {
+        match event {
+            glutin::Event::WindowEvent {event, ..} => match event {
+                glutin::WindowEvent::CloseRequested => true,
+                _ => false,
+            },
+            _ => false,
+        }
+    }
 }
 
 
@@ -142,14 +153,8 @@ fn main() {
         target.finish().unwrap();
 
         // candidtate for next refactoring
-        events_loop.poll_events(|ev| {
-            match ev {
-                glutin::Event::WindowEvent {event, ..} => match event {
-                    glutin::WindowEvent::CloseRequested => closed = true,
-                    _ => (),
-                },
-                _ => (),
-            }
+        events_loop.poll_events(|e| {
+            closed = layer.handle_event(e);
         });
     }
 }
