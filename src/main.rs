@@ -1,90 +1,11 @@
-#[macro_use] extern crate glium;
+extern crate glium;
 extern crate glium_tut;
 
 use glium::glutin;
-use glium::Surface;
 use glium_tut::render;
 use glium_tut::layer::{Layer, ClearColorRGBA};
 use glium_tut::vertex::Vertex;
-
-
-// Shaders -- rapidly zoom in and out.
-const VERTEX_SHADER_SRC: &str = r#"
-  #version 140
-  in vec2 position;
-  uniform float time;
-  void main() {
-    gl_Position = vec4(position * sin(time), 0.0, 1.0);
-  }
-"#;
-
-// Shaders -- oscillate between yellow and green.
-const FRAGMENT_SHADER_SRC: &str = r#"
-  #version 140
-  out vec4 color;
-  uniform float time;
-  void main() {
-    color = vec4((sin(time) + 1) * 0.5, 1.0, 0.0, 1.0);
-  }
-"#;
-
-
-
-// SineWaveDemo generalizes into PolyLine.
-// Note, this struct itself is probably more general still.
-pub struct PolyLine {
-    vbo: glium::VertexBuffer<Vertex>,
-    program: glium::Program,
-}
-
-// Only this impl, which makes assumptions about the vertex buffer and
-// shaders.
-impl PolyLine {
-    fn new(display: &glium::Display, vertices: &[Vertex]) -> PolyLine {
-        PolyLine {
-            vbo: glium::VertexBuffer::new(
-                display,
-                vertices
-            ).unwrap(),
-            program: glium::Program::from_source(
-                display,
-                VERTEX_SHADER_SRC,
-                FRAGMENT_SHADER_SRC,
-                None
-            ).unwrap()
-        }
-    }
-}
-
-
-// Even the Layer impl is pretty generic.
-impl Layer for PolyLine {
-    fn draw(&self, frame: &mut glium::Frame, time: f32) {
-        let indexes = glium::index::NoIndices(
-            glium::index::PrimitiveType::LineStrip
-        );
-
-        frame.draw(
-            &self.vbo,
-            &indexes,
-            &self.program,
-            &uniform!{time: time},
-            &Default::default()
-        ).unwrap();
-    }
-
-    // And it's pretty clear that handle event may not belong in here, now.
-    fn handle_event(&self, event: glutin::Event) -> bool {
-        match event {
-            glutin::Event::WindowEvent {event, ..} => match event {
-                glutin::WindowEvent::CloseRequested => true,
-                _ => false,
-            },
-            _ => false,
-        }
-    }
-}
-
+use glium_tut::polyline::PolyLine;
 
 
 // Generate some data. Later this will be loaded off disk.

@@ -3,6 +3,7 @@
 pub mod clock;
 pub mod vertex;
 pub mod layer;
+pub mod polyline;
 
 
 use glium::glutin;
