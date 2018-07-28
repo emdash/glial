@@ -115,6 +115,26 @@ impl Layer for SineWaveDemo {
 }
 
 
+pub struct ClearColorRGBA {
+    red: f32,
+    green: f32,
+    blue: f32,
+    // XXX: is alpha meaningful for clear_color?
+    alpha: f32,
+}
+
+
+impl Layer for ClearColorRGBA {
+    fn draw(&self, frame: &mut glium::Frame, _: f32) {
+        frame.clear_color(self.red, self.green, self.blue, self.alpha);
+    }
+
+    fn handle_event(&self, _: glutin::Event) -> bool {
+        false
+    }
+}
+
+
 // Generate some data. Later this will be loaded off disk.
 fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     let x0 = domain[0];
@@ -144,14 +164,18 @@ fn main() {
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let clock = Clock::new();
 
+    let background = ClearColorRGBA {
+        red: 1.0,
+        green: 0.0,
+        blue: 0.0,
+        alpha: 1.0
+    };
     let sine = SineWaveDemo::new(&display);
 
-    let layers: Vec<&Layer> = vec![&sine];
+    let layers: Vec<&Layer> = vec![&background, &sine];
 
     while !closed {
         let mut target = display.draw();
-
-        target.clear_color(0.0, 0.0, 0.0, 1.0);
 
         for layer in &layers {
             layer.draw(&mut target, clock.seconds());
