@@ -2,7 +2,6 @@
 
 extern crate glium;
 
-use glium::glutin;
 use glium::Surface;
 use vertex::Vertex;
 use layer::Layer;
@@ -71,16 +70,5 @@ impl Layer for PolyLine {
             &uniform!{time: time},
             &Default::default()
         ).unwrap();
-    }
-
-    // And it's pretty clear that handle event may not belong in here, now.
-    fn handle_event(&self, event: glutin::Event) -> bool {
-        match event {
-            glutin::Event::WindowEvent {event, ..} => match event {
-                glutin::WindowEvent::CloseRequested => true,
-                _ => false,
-            },
-            _ => false,
-        }
     }
 }
