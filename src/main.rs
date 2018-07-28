@@ -1,8 +1,11 @@
 #[macro_use]
+
 extern crate glium;
-use std::time::Instant;
+extern crate glium_tut;
+
 use glium::glutin;
 use glium::Surface;
+use glium_tut::clock::Clock;
 
 
 
@@ -25,26 +28,6 @@ const FRAGMENT_SHADER_SRC: &str = r#"
     color = vec4((sin(time) + 1) * 0.5, 1.0, 0.0, 1.0);
   }
 "#;
-
-
-// Wrapper around somewhat obnoxious system time api.
-struct Clock {
-    instant: Instant,
-}
-
-impl Clock {
-    pub fn new() -> Clock {
-        Clock {
-            instant: Instant::now(),
-        }
-    }
-
-    // Return system time as floating point value.
-    pub fn seconds(&self) -> f32 {
-        let e = self.instant.elapsed();
-        ((e.as_secs() as f64) + (0.001 * e.subsec_millis() as f64)) as f32
-    }
-}
 
 
 #[derive(Copy, Clone)]

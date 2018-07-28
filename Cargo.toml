@@ -1,5 +1,5 @@
 [package]
-name = "glium-tut"
+name = "glium_tut"
 version = "0.1.0"
 authors = ["Brandon Lewis <dotsony@gmail.com>"]
 
