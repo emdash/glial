@@ -155,14 +155,36 @@ fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     ret
 }
 
+
+fn render(
+    layers: &[&Layer],
+    display: &glium::Display,
+    mainloop: &mut glutin::EventsLoop
+) {
+    let mut closed = false;
+    let clock = Clock::new();
+
+    while !closed {
+        let mut target = display.draw();
+
+        for layer in layers {
+            layer.draw(&mut target, clock.seconds());
+
+            mainloop.poll_events(|e| {
+                closed = layer.handle_event(e);
+            });
+        }
+
+        target.finish().unwrap();
+    }
+}
+
+
 fn main() {
     let mut events_loop = glutin::EventsLoop::new();
-    let mut closed = false;
-
     let window = glutin::WindowBuilder::new();
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
-    let clock = Clock::new();
 
     let background = ClearColorRGBA {
         red: 1.0,
@@ -170,21 +192,10 @@ fn main() {
         blue: 0.0,
         alpha: 1.0
     };
+
     let sine = SineWaveDemo::new(&display);
 
     let layers: Vec<&Layer> = vec![&background, &sine];
 
-    while !closed {
-        let mut target = display.draw();
-
-        for layer in &layers {
-            layer.draw(&mut target, clock.seconds());
-
-            events_loop.poll_events(|e| {
-                closed = layer.handle_event(e);
-            });
-        }
-
-        target.finish().unwrap();
-    }
+    render(&layers, &display, &mut events_loop);
 }
