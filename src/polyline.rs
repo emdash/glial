@@ -7,7 +7,8 @@ use vertex::Vertex;
 use layer::Layer;
 
 
-// Shaders -- rapidly zoom in and out.
+// This shader basically just represents the 2D viewport.
+// A lot of geometric primitives would re-use this.
 const VERTEX_SHADER_SRC: &str = r#"
   #version 140
   in vec2 position;
@@ -18,13 +19,15 @@ const VERTEX_SHADER_SRC: &str = r#"
 "#;
 
 
-// Shaders -- oscillate between yellow and green.
+// This shader is just a solid color. We just lost the uniform we were
+// using to vary the color over time.
+//
+// The fragment shader will correspond to a material and / or pattern.
 const FRAGMENT_SHADER_SRC: &str = r#"
   #version 140
   out vec4 color;
-  uniform float time;
   void main() {
-    color = vec4((sin(time) + 1) * 0.5, 1.0, 0.0, 1.0);
+    color = vec4(1.0, 1.0, 0.0, 1.0);
   }
 "#;
 
@@ -34,6 +37,10 @@ const FRAGMENT_SHADER_SRC: &str = r#"
 // Perhaps PolyLine can delegate to a more general type.
 pub struct PolyLine {
     vbo: glium::VertexBuffer<Vertex>,
+    // This program really belongs to a more generic notion of a "2D
+    // Canvas", or "2D Primative", of which PolyLine is just one
+    // instance. All primatives would render into a viewport, with
+    // their per-instance pattern.
     program: glium::Program,
 }
 

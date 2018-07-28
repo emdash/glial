@@ -34,11 +34,16 @@ pub fn render(
 ) {
     let mut closed = false;
     let clock = Clock::new();
-    let transform = [[1.0, 0.0, 0.0],
-                      [0.0, 1.0, 0.0],
-                      [0.0, 0.0, 1.0]];
 
     while !closed {
+        let time = clock.seconds();
+        let scale = time.sin();
+
+        // At this point, we need a marix library to implement common
+        // transforms.
+        let transform = [[scale, 0.0, 0.0],
+                         [0.0, scale, 0.0],
+                         [0.0, 0.0, 1.0]];
         let mut target = display.draw();
         for layer in layers {
             layer.draw(&mut target, &transform);
