@@ -1,13 +1,11 @@
-#[macro_use]
-
-extern crate glium;
+#[macro_use] extern crate glium;
 extern crate glium_tut;
 
 use glium::glutin;
 use glium::Surface;
 use glium_tut::render;
 use glium_tut::layer::{Layer, ClearColorRGBA};
-
+use glium_tut::vertex::Vertex;
 
 
 // Shaders -- rapidly zoom in and out.
@@ -30,12 +28,6 @@ const FRAGMENT_SHADER_SRC: &str = r#"
   }
 "#;
 
-
-#[derive(Copy, Clone)]
-struct Vertex {
-    position: [f32; 2],
-}
-implement_vertex!(Vertex, position);
 
 
 // SineWaveDemo generalizes into PolyLine.

@@ -1,10 +1,11 @@
+#[macro_use] extern crate glium;
+
 pub mod clock;
+pub mod vertex;
 pub mod layer;
 
-extern crate glium;
 
 use glium::glutin;
-use glium::Surface;
 use clock::Clock;
 use layer::Layer;
 
