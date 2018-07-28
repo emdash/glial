@@ -4,7 +4,7 @@ use glium::Surface;
 
 // Abstract a bunch of Drawing-related stuff from the boilerplate.
 pub trait Layer {
-    fn draw(&self, frame: &mut glium::Frame, time: f32);
+    fn draw(&self, frame: &mut glium::Frame, tansform: &[[f32; 3]; 3]);
 }
 
 
@@ -16,7 +16,7 @@ pub struct ClearColorRGBA {
 }
 
 impl Layer for ClearColorRGBA {
-    fn draw(&self, frame: &mut glium::Frame, _: f32) {
+    fn draw(&self, frame: &mut glium::Frame, _: &[[f32; 3]; 3]) {
         frame.clear_color(self.red, self.green, self.blue, 1.0);
     }
 }

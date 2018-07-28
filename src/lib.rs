@@ -12,7 +12,7 @@ use layer::Layer;
 
 // Quits mainloop when window closes.
 // Pretty clear that this was broken before, since the event wasn't
-// dispatched to all layers.
+// dispatched to all layers -- each event was round-robined between layers.
 fn quit_on_close(event: glutin::Event) -> bool {
     match event {
         glutin::Event::WindowEvent {event, ..} => match event {
@@ -23,6 +23,8 @@ fn quit_on_close(event: glutin::Event) -> bool {
     }
 }
 
+// this function should probably be generic over the layers and event
+// handler collection type.
 pub fn render(
     // layers could be any collection of Layers that can traversed in
     // a stable order, but a slice is used for now.
@@ -32,17 +34,23 @@ pub fn render(
 ) {
     let mut closed = false;
     let clock = Clock::new();
+    let transform = [[1.0, 0.0, 0.0],
+                      [0.0, 1.0, 0.0],
+                      [0.0, 0.0, 1.0]];
 
     while !closed {
         let mut target = display.draw();
         for layer in layers {
-            layer.draw(&mut target, clock.seconds());
+            layer.draw(&mut target, &transform);
         }
         target.finish().unwrap();
 
         mainloop.poll_events(|e| {
             // this suggests perhaps an enum return type, indicating
             // the action to take next, redux-style
+            //
+            // we could also be passing in a set of event handlers to
+            // try, in order.
             closed = quit_on_close(e);
             // stores and transformers would be much easier to
             // implement in rust with match expressions.

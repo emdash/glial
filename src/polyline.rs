@@ -11,9 +11,9 @@ use layer::Layer;
 const VERTEX_SHADER_SRC: &str = r#"
   #version 140
   in vec2 position;
-  uniform float time;
+  uniform mat3 transform;
   void main() {
-    gl_Position = vec4(position * sin(time), 0.0, 1.0);
+    gl_Position = vec4(transform * vec3(position, 1.0), 1.0);
   }
 "#;
 
@@ -58,7 +58,7 @@ impl PolyLine {
 
 // Even the Layer impl is pretty generic.
 impl Layer for PolyLine {
-    fn draw(&self, frame: &mut glium::Frame, time: f32) {
+    fn draw(&self, frame: &mut glium::Frame, transform: &[[f32; 3]; 3]) {
         let indexes = glium::index::NoIndices(
             glium::index::PrimitiveType::LineStrip
         );
@@ -67,7 +67,7 @@ impl Layer for PolyLine {
             &self.vbo,
             &indexes,
             &self.program,
-            &uniform!{time: time},
+            &uniform!{transform: *transform},
             &Default::default()
         ).unwrap();
     }

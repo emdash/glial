@@ -19,9 +19,7 @@ fn evaluate(
     n: u32
 ) -> Vec<Vertex> {
     let x0 = domain[0];
-
     let span = (domain[1] - domain[0]).abs();
-
     let x_step = span / (n as f32);
     let scale = 2.0 / span;
     let mut ret = Vec::new();
