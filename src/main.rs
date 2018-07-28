@@ -100,7 +100,11 @@ impl Layer for PolyLine {
 // Note: this internally normalizes into the GL coordinates of (-1,
 // -1) to (1, 1). The next step is to factor out the evaluation from
 // the transform.
-fn sin(domain: [f32; 2], n: u32) -> Vec<Vertex> {
+fn evaluate(
+    f: &Fn(f32) -> f32,
+    domain: [f32; 2],
+    n: u32
+) -> Vec<Vertex> {
     let x0 = domain[0];
 
     let span = (domain[1] - domain[0]).abs();
@@ -112,7 +116,7 @@ fn sin(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     for i in 0..n {
         let x = x0 + (i as f32) * x_step;
         ret.push(Vertex {
-            position: [x * scale, x.sin()],
+            position: [x * scale, f(x)],
         });
     }
 
@@ -131,9 +135,9 @@ fn main() {
         blue: 0.0,
     };
 
-    let sine_points = sin([-10.0, 10.0], 100);
-    let sine = PolyLine::new(&display, &sine_points);
-    let layers: Vec<&Layer> = vec![&background, &sine];
+    let points = evaluate(&|x: f32| x.sin(), [-10.0, 10.0], 100);
+    let curve = PolyLine::new(&display, &points);
+    let layers: Vec<&Layer> = vec![&background, &curve];
 
     render(&layers, &display, &mut events_loop);
 }
