@@ -31,27 +31,45 @@ struct Vertex {
 // not sure why they take this approach rather than supplying a vertex type.
 implement_vertex!(Vertex, position);
 
-// I'm declaring these as globals, regardless what the tutorial says for now.
-const vertex1: Vertex = Vertex {position: [-0.5, -0.5]};
-const vertex2: Vertex = Vertex {position: [ 0.5,  0.5]};
-const vertex3: Vertex = Vertex {position: [ 0.5, -0.25]};
 
-const vertex_shader_src: &str = r#"
+const VERTEX_SHADER_SRC: &str = r#"
   #version 140
   in vec2 position;
   uniform float time;
   void main() {
-    gl_Position = vec4(position.x + time * 0.1, position.y, 0.0, 1.0);
+    gl_Position = vec4(position * sin(time), 0.0, 1.0);
   }
 "#;
 
-const fragment_shader_src: &str = r#"
+const FRAGMENT_SHADER_SRC: &str = r#"
   #version 140
   out vec4 color;
   void main() {
     color = vec4(1.0, 0.0, 0.0, 1.0);
   }
 "#;
+
+
+// Generate some data. Later this will be loaded off disk.
+fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
+    let x0 = domain[0];
+
+    let span = (domain[1] - domain[0]).abs();
+    println!("{}", span);
+
+    let x_step = span / (n as f32);
+    let scale = 2.0 / span;
+    let mut ret = Vec::new();
+
+    for i in 0..n {
+        let x = (x0 + (i as f32) * x_step);
+        ret.push(Vertex {
+            position: [x * scale, x.sin()],
+        });
+    }
+
+    ret
+}
 
 fn main() {
     use glium::glutin;
@@ -65,20 +83,20 @@ fn main() {
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let clock = Clock::new();
 
-    let shape = vec!{vertex1, vertex2, vertex3};
+    let shape = make_shape([-50.0, 50.0], 1000);
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+    let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
     let program = glium::Program::from_source(
         &display,
-        vertex_shader_src,
-        fragment_shader_src, None
+        VERTEX_SHADER_SRC,
+        FRAGMENT_SHADER_SRC, None
     ).unwrap();
 
 
     while !closed {
         let mut target = display.draw();
 
-        target.clear_color(0.0, 0.0, 1.0, 1.0);
+        target.clear_color(0.0, 0.0, 0.0, 1.0);
         target.draw(
             &vertex_buffer,
             &indices,
