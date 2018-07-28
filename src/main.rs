@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate glium;
 use std::time::Instant;
+use glium::glutin;
+use glium::Surface;
+
 
 
 // Shaders -- rapidly zoom in and out.
@@ -53,6 +56,54 @@ struct Vertex {
 implement_vertex!(Vertex, position);
 
 
+// Abstract a bunch of Drawing-related stuff from the boilerplate.
+pub trait Layer {
+    fn draw(&self, frame: &mut glium::Frame, time: f32);
+}
+
+
+// Factor out the original demo code into a struct that implements the Layer trait
+pub struct SineWaveDemo {
+    vbo: glium::VertexBuffer<Vertex>,
+    program: glium::Program,
+}
+
+impl SineWaveDemo {
+    fn new(display: &glium::Display) -> SineWaveDemo {
+        let vertices = make_shape([-10.0, 10.0], 100);
+
+        SineWaveDemo {
+            vbo: glium::VertexBuffer::new(
+                display,
+                &vertices
+            ).unwrap(),
+            program: glium::Program::from_source(
+                display,
+                VERTEX_SHADER_SRC,
+                FRAGMENT_SHADER_SRC,
+                None
+            ).unwrap()
+        }
+    }
+}
+
+impl Layer for SineWaveDemo {
+    fn draw(&self, frame: &mut glium::Frame, time: f32) {
+        let indexes = glium::index::NoIndices(
+            glium::index::PrimitiveType::LineStrip
+        );
+
+        frame.draw(
+            &self.vbo,
+            &indexes,
+            &self.program,
+            &uniform!{time: time},
+            &Default::default()
+        ).unwrap();
+    }
+}
+
+
 // Generate some data. Later this will be loaded off disk.
 fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
     let x0 = domain[0];
@@ -74,9 +125,6 @@ fn make_shape(domain: [f32; 2], n: u32) -> Vec<Vertex> {
 }
 
 fn main() {
-    use glium::glutin;
-    use glium::Surface;
-
     let mut events_loop = glutin::EventsLoop::new();
     let mut closed = false;
 
@@ -84,53 +132,16 @@ fn main() {
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let clock = Clock::new();
-
-    // Gene
-    let shape = make_shape([-10.0, 10.0], 100);
-
-    // so.... these things...
-    let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineStrip);
-    let program = glium::Program::from_source(
-        &display,
-        VERTEX_SHADER_SRC,
-        FRAGMENT_SHADER_SRC, None
-    ).unwrap();
-
+    let layer = SineWaveDemo::new(&display);
 
     while !closed {
         let mut target = display.draw();
 
         target.clear_color(0.0, 0.0, 0.0, 1.0);
-
-        // ... plus this call ... 
-        target.draw(
-            &vertex_buffer,
-            &indices,
-            &program,
-            &uniform!{time: clock.seconds()},
-            &Default::default()
-        ).unwrap();
-        // corresponds to a single "layer" in the image.
-
-        // The draw call needs:
-        // - vertex buffer
-        // - an enum explaining *what* the vertex list represents
-        // - the shader programs to interpret the vertex buffer
-        // - uniforms (i.e., input and output)
-
-        // The extension points are:
-        // - the shape of the Vertex object.
-        //   - i.e. arbitrary named per-vertex fields, corresponding to glsl "in" parameters.
-        //   - i.e. arbitrary named per-vertex fields, corresponding to glsl "attribute" parameters.
-        // - the shape of the uniforms object
-        //   - i.e. arbitrary named per-uniform fields, corresponding to glsl "uniform" parameters.
-
-        // Glium is able to use macros and or RTTI to automatically
-        // connect these things together. The underlying opengl C api
-        // is string-based and dynamic.
-
+        layer.draw(&mut target, clock.seconds());
         target.finish().unwrap();
+
+        // candidtate for next refactoring
         events_loop.poll_events(|ev| {
             match ev {
                 glutin::Event::WindowEvent {event, ..} => match event {
