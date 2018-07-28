@@ -16,13 +16,11 @@ pub struct ClearColorRGBA {
     pub red: f32,
     pub green: f32,
     pub blue: f32,
-    // XXX: is alpha meaningful for clear_color?
-    pub alpha: f32,
 }
 
 impl Layer for ClearColorRGBA {
     fn draw(&self, frame: &mut glium::Frame, _: f32) {
-        frame.clear_color(self.red, self.green, self.blue, self.alpha);
+        frame.clear_color(self.red, self.green, self.blue, 1.0);
     }
 
     fn handle_event(&self, _: glutin::Event) -> bool {
@@ -52,5 +50,3 @@ pub fn render(
         target.finish().unwrap();
     }
 }
-
-

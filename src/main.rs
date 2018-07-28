@@ -117,10 +117,9 @@ fn main() {
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
     let background = ClearColorRGBA {
-        red: 1.0,
-        green: 1.0,
-        blue: 1.0,
-        alpha: 0.0
+        red: 0.0,
+        green: 0.0,
+        blue: 0.0,
     };
     let sine = SineWaveDemo::new(&display);
     let layers: Vec<&Layer> = vec![&background, &sine];
