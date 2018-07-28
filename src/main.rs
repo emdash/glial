@@ -5,8 +5,7 @@ extern crate glium_tut;
 
 use glium::glutin;
 use glium::Surface;
-use glium_tut::{Layer, ClearColorRGBA};
-use glium_tut::clock::Clock;
+use glium_tut::{Layer, ClearColorRGBA, render};
 
 
 
@@ -117,16 +116,13 @@ fn main() {
     let window = glutin::WindowBuilder::new();
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
-
     let background = ClearColorRGBA {
         red: 1.0,
-        green: 0.0,
-        blue: 0.0,
-        alpha: 1.0
+        green: 1.0,
+        blue: 1.0,
+        alpha: 0.0
     };
-
     let sine = SineWaveDemo::new(&display);
-
     let layers: Vec<&Layer> = vec![&background, &sine];
 
     render(&layers, &display, &mut events_loop);
