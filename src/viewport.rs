@@ -44,6 +44,7 @@ pub type Transform = TypedTransform2D<f32, ModelSpace, ScreenSpace>;
 // the Range* traits in std, but those are for iterators, while this
 // represents the mathematical concept of a continuous set of numbers
 // between two endpoints.
+#[derive(Debug)]
 pub struct Interval {
     pub lower: f32,
     pub upper: f32,
