@@ -98,11 +98,12 @@ impl ViewPort {
         let transform = Transform::row_major(
              1.0,            0.0,
              0.0,            1.0,
-             0.0,            0.0,
+             0.0,            -model.center().y,
         );
 
         println!("{:?}", domain);
         println!("{:?}", range);
+        println!("{:?}", model.center());
         println!("{:?}", transform.to_row_arrays());
 
         ViewPort {
