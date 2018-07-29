@@ -53,7 +53,7 @@ pub struct Interval {
 
 impl Interval {
     pub fn from_endpoints(a: f32, b: f32) -> Interval {
-        let (upper, lower) = if a > b {
+        let (upper, lower) = if a < b {
             (b, a)
         } else {
             (a, b)
