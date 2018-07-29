@@ -84,7 +84,7 @@ impl ViewPort {
         // Use the default opengl viewport for now.
         let screen = ScreenRect::new(
             ScreenPoint::new(-1.0, -1.0),
-            TypedSize2D::new(2.0, 2.0)
+            TypedSize2D::new(2.0, 1.0)
         );
 
         // What confused me a great deal here is that the output
@@ -100,12 +100,8 @@ impl ViewPort {
             .post_scale(
                 screen.size.width / domain.span,
                 screen.size.height / range.span,
-            );
-
-        println!("{:?}", domain);
-        println!("{:?}", range);
-        println!("{:?}", model.center());
-        println!("{:?}", transform.to_row_arrays());
+            )
+            .post_translate(-screen.center().to_vector());
 
         ViewPort {
             // domain,
