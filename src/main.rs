@@ -21,13 +21,12 @@ fn evaluate(
     let x0 = domain[0];
     let span = (domain[1] - domain[0]).abs();
     let x_step = span / (n as f32);
-    let scale = 2.0 / span;
     let mut ret = Vec::new();
 
     for i in 0..n {
         let x = x0 + (i as f32) * x_step;
         ret.push(Vertex {
-            position: [x * scale, f(x)],
+            position: [x, f(x)],
         });
     }
 
@@ -46,7 +45,7 @@ fn main() {
         blue: 0.0,
     };
 
-    let points = evaluate(&|x: f32| x.sin(), [-10.0, 10.0], 100);
+    let points = evaluate(&|x: f32| x.sin(), [-5.0, 5.0], 1000);
     let curve = PolyLine::new(&display, &points);
     let layers: Vec<&Layer> = vec![&background, &curve];
 

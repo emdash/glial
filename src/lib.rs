@@ -1,9 +1,11 @@
 #[macro_use] extern crate glium;
+extern crate euclid;
 
 pub mod clock;
 pub mod vertex;
 pub mod layer;
 pub mod polyline;
+pub mod viewport;
 
 
 use glium::glutin;
@@ -23,6 +25,7 @@ fn quit_on_close(event: glutin::Event) -> bool {
     }
 }
 
+
 // this function should probably be generic over the layers and event
 // handler collection type.
 pub fn render(
@@ -39,14 +42,9 @@ pub fn render(
         let time = clock.seconds();
         let scale = time.sin();
 
-        // At this point, we need a marix library to implement common
-        // transforms.
-        let transform = [[scale, 0.0, 0.0],
-                         [0.0, scale, 0.0],
-                         [0.0, 0.0, 1.0]];
         let mut target = display.draw();
         for layer in layers {
-            layer.draw(&mut target, &transform);
+            layer.draw(&mut target);
         }
         target.finish().unwrap();
 
