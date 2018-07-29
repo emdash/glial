@@ -85,7 +85,7 @@ impl ViewPort {
         // Use the default opengl viewport for now.
         let screen = ScreenRect::new(
             ScreenPoint::new(-1.0, -1.0),
-            TypedSize2D::new(1.0, 1.0)
+            TypedSize2D::new(2.0, 2.0)
         );
 
         // What confused me a great deal here is that the output
