@@ -73,16 +73,14 @@ pub fn fit_to_data(vertices: &[Vertex]) -> ViewPort {
 
         ),
         Interval::from_endpoints(
-            smallest(vertices, 0),
-            largest(vertices, 0),
+            smallest(vertices, 1),
+            largest(vertices, 1),
         )
     )
 }
 
 fn to_gl_array(vp: &ViewPort) -> [[f32; 3]; 3] {
     let slice = vp.get_transform().to_row_arrays();
-
-    println!("{:?}", slice);
 
     [
         [slice[0][0], slice[1][0], 0.0],
