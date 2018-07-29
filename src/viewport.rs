@@ -95,11 +95,12 @@ impl ViewPort {
         // we must at some point. But for now, we'll just leave it
         // like this.
 
-        let transform = Transform::row_major(
-             1.0,            0.0,
-             0.0,            1.0,
-             0.0,            -model.center().y,
-        );
+        let transform = Transform::identity()
+            .pre_translate(-model.center().to_vector())
+            .post_scale(
+                screen.size.width / domain.span,
+                screen.size.height / range.span,
+            );
 
         println!("{:?}", domain);
         println!("{:?}", range);

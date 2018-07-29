@@ -45,7 +45,7 @@ fn main() {
         blue: 0.0,
     };
 
-    let points = evaluate(&|x: f32| (x * 5.0).sin() - 5.0, [-1.0, 1.0], 1000);
+    let points = evaluate(&|x: f32| 10.0 * (x * 5.0).sin() - 5.0, [-13.5, 50.0], 1000);
     let curve = PolyLine::new(&display, &points);
     let layers: Vec<&Layer> = vec![&background, &curve];
 
