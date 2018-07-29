@@ -78,7 +78,6 @@ impl ViewPort {
     pub fn new(domain: Interval, range: Interval) -> ViewPort {
         let model = ModelRect::new(
             ModelPoint::new(domain.lower, range.lower),
-            // ... The type mismatch here led me me to change .upper to .span!
             TypedSize2D::new(domain.span, range.span),
         );
 
@@ -93,13 +92,18 @@ impl ViewPort {
         // a specific corner.
         //
         // Naturally, we could override the default gl viewport, and
-        // we must at some point.
-        let transform = Transform::identity()
-            .pre_translate(-model.center().to_vector())
-            .pre_scale(
-                2.0 * screen.size.width / domain.span,
-                2.0 * screen.size.height / range.span,
-            );
+        // we must at some point. But for now, we'll just leave it
+        // like this.
+
+        let transform = Transform::row_major(
+             1.0,            0.0,
+             0.0,            1.0,
+             0.0,            0.0,
+        );
+
+        println!("{:?}", domain);
+        println!("{:?}", range);
+        println!("{:?}", transform.to_row_arrays());
 
         ViewPort {
             // domain,
