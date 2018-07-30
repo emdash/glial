@@ -5,8 +5,7 @@ extern crate glium;
 use glium::{Surface};
 use vertex::Vertex;
 use layer::Layer;
-use viewport::{ViewPort, Interval};
-use std;
+use viewport::ViewPort;
 
 
 // This shader basically just represents the 2D viewport.
@@ -44,49 +43,6 @@ pub struct PolyLine {
     // instance. All primatives would render into a viewport, with
     // their per-instance pattern.
     program: glium::Program,
-    viewport: ViewPort,
-}
-
-// And now the problem of floats not implmenting Ord rears its ugly
-// head.  Will solve this with an external crate later. For now just
-// do something naive to get us going.
-fn smallest(vertices: &[Vertex], index: usize) -> f32 {
-    vertices.iter().map(|el| el.position[index]).fold(
-        std::f32::MAX,
-        |a, b| a.min(b)
-    )
-}
-
-
-fn largest(vertices: &[Vertex], index: usize) -> f32 {
-    vertices.iter().map(|el| el.position[index]).fold(
-        std::f32::MIN,
-        |a, b| a.max(b)
-    )
-}
-
-pub fn fit_to_data(vertices: &[Vertex]) -> ViewPort {
-    ViewPort::new(
-        Interval::from_endpoints(
-            smallest(vertices, 0),
-            largest(vertices, 0)
-
-        ),
-        Interval::from_endpoints(
-            smallest(vertices, 1),
-            largest(vertices, 1),
-        )
-    )
-}
-
-fn to_gl_array(vp: &ViewPort) -> [[f32; 3]; 3] {
-    let slice = vp.get_transform().to_row_arrays();
-
-    [
-        [slice[0][0], slice[1][0], 0.0],
-        [slice[1][0], slice[1][1], 0.0],
-        [slice[2][0], slice[2][1], 1.0],
-    ]
 }
 
 
@@ -104,7 +60,6 @@ impl PolyLine {
                 FRAGMENT_SHADER_SRC,
                 None
             ).unwrap(),
-            viewport: fit_to_data(vertices)
         }
     }
 }
@@ -112,13 +67,13 @@ impl PolyLine {
 
 // Even the Layer impl is pretty generic.
 impl Layer for PolyLine {
-    fn draw(&self, frame: &mut glium::Frame) {
+    fn draw(&self, frame: &mut glium::Frame, vp: &ViewPort) {
         let indexes = glium::index::NoIndices(
             glium::index::PrimitiveType::LineStrip
         );
 
         let uniforms = uniform! {
-            transform: to_gl_array(&self.viewport)
+            transform: vp.to_gl_array()
         };
 
         frame.draw(

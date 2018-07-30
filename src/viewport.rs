@@ -6,6 +6,7 @@ use euclid::{
     TypedRect,
 };
 
+
 // Represents quantities on the screen
 pub struct ScreenSpace;
 pub type ScreenPoint = TypedPoint2D<f32, ScreenSpace>;
@@ -112,5 +113,14 @@ impl ViewPort {
 
     pub fn get_transform(&self) -> Transform {
         self.transform
+    }
+
+    pub fn to_gl_array(&self) -> [[f32; 3]; 3] {
+        let slice = self.get_transform().to_row_arrays();
+        [
+            [slice[0][0], slice[1][0], 0.0],
+            [slice[1][0], slice[1][1], 0.0],
+            [slice[2][0], slice[2][1], 1.0],
+        ]
     }
 }

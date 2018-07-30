@@ -11,6 +11,9 @@ pub mod viewport;
 use glium::glutin;
 use clock::Clock;
 use layer::Layer;
+use viewport::ViewPort;
+
+
 
 // Quits mainloop when window closes.
 // Pretty clear that this was broken before, since the event wasn't
@@ -33,7 +36,8 @@ pub fn render(
     // a stable order, but a slice is used for now.
     layers: &[&Layer],
     display: &glium::Display,
-    mainloop: &mut glutin::EventsLoop
+    mainloop: &mut glutin::EventsLoop,
+    viewport: &ViewPort,
 ) {
     let mut closed = false;
     let clock = Clock::new();
@@ -44,7 +48,7 @@ pub fn render(
 
         let mut target = display.draw();
         for layer in layers {
-            layer.draw(&mut target);
+            layer.draw(&mut target, viewport);
         }
         target.finish().unwrap();
 
@@ -60,4 +64,3 @@ pub fn render(
         });
     }
 }
-
