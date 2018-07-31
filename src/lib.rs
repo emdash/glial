@@ -6,6 +6,7 @@ pub mod vertex;
 pub mod layer;
 pub mod canvas;
 pub mod polyline;
+pub mod polygon;
 pub mod viewport;
 
 
