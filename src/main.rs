@@ -69,19 +69,26 @@ fn main() {
         blue: 0.0,
     };
 
-    let points = evaluate(
-        &|x: f32| 10.0 * (x * 5.0).sin() - 5.0,
-        [-13.5, 50.0],
+    let sin_x = evaluate(
+        &|x: f32| x.sin(),
+        [-10.0, 10.0],
         10000
     );
 
-    let vp = fit_viewport_to_data(&points);
+    let cos_x = evaluate(
+        &|x: f32| x.cos(),
+        [-10.0, 10.0],
+        10000
+    );
+
+    let vp = fit_viewport_to_data(&sin_x);
 
     // Note thi is now copying points. Probably we'll implement
     // zoom_to_fit() on canvas, or viewport now that a clear pattern
     // is emerging WRT where Point2D will be introduced into the API.
-    let curve = PolyLine::new(&points);
-    let shapes: Vec<&Shape> = vec![&curve];
+    let sin = PolyLine::new(&sin_x);
+    let cos = PolyLine::new(&cos_x);
+    let shapes: Vec<&Shape> = vec![&sin, &cos];
     let canvas = Canvas2D::new(&display, &shapes);
     let layers: Vec<&Layer> = vec![&background, &canvas];
 
