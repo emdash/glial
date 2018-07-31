@@ -11,10 +11,6 @@ use glium_tut::viewport::{ViewPort, Interval};
 
 
 // Generate some data. Later this will be loaded off disk.
-
-// Note: this internally normalizes into the GL coordinates of (-1,
-// -1) to (1, 1). The next step is to factor out the evaluation from
-// the transform.
 fn evaluate(
     f: &Fn(f32) -> f32,
     domain: [f32; 2],
