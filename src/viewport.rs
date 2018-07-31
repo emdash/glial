@@ -88,14 +88,6 @@ impl ViewPort {
             TypedSize2D::new(2.0, 1.0)
         );
 
-        // What confused me a great deal here is that the output
-        // viewport places 0,0 at the center of the screen rather than
-        // a specific corner.
-        //
-        // Naturally, we could override the default gl viewport, and
-        // we must at some point. But for now, we'll just leave it
-        // like this.
-
         let transform = Transform::identity()
             .pre_translate(-model.center().to_vector())
             .post_scale(
