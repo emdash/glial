@@ -6,3 +6,4 @@ authors = ["Brandon Lewis <dotsony@gmail.com>"]
 [dependencies]
 glium = "*"
 euclid = "0.19.0"
+polygon2 = "0.3.0"

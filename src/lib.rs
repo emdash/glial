@@ -1,5 +1,6 @@
 #[macro_use] extern crate glium;
 extern crate euclid;
+extern crate polygon2;
 
 pub mod clock;
 pub mod vertex;

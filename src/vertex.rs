@@ -1,6 +1,6 @@
 use std;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Vertex {
     pub position: [f32; 2],
 }

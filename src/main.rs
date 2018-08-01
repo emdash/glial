@@ -8,7 +8,7 @@ use glium_tut::render;
 use glium_tut::layer::{Layer, ClearColorRGBA};
 use glium_tut::vertex::{Vertex, smallest, largest};
 use glium_tut::polyline::PolyLine;
-use glium_tut::polygon::Rect;
+use glium_tut::polygon::{Rect, Polygon};
 use glium_tut::canvas::{Canvas2D, Shape};
 use glium_tut::viewport::{ViewPort, Interval};
 
@@ -90,12 +90,15 @@ fn main() {
         Point2D::new(2.5, -0.5)
     );
 
-    // Note thi is now copying points. Probably we'll implement
-    // zoom_to_fit() on canvas, or viewport now that a clear pattern
-    // is emerging WRT where Point2D will be introduced into the API.
     let sin = PolyLine::new(&sin_x);
     let cos = PolyLine::new(&cos_x);
-    let shapes: Vec<&Shape> = vec![&sin, &cos, &rect];
+    let poly = Polygon::new(&[
+        Vertex {position: [-5.0,  0.5]},
+        Vertex {position: [4.0,  -0.5]},
+        Vertex {position: [-2.5, -0.1]},
+        Vertex {position: [-4.5, 1.0]}
+    ]);
+    let shapes: Vec<&Shape> = vec![&sin, &cos, &rect, &poly];
     let canvas = Canvas2D::new(&display, &shapes);
     let layers: Vec<&Layer> = vec![&background, &canvas];
 
